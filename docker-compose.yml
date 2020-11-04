@@ -1,0 +1,34 @@
+version: "3.7"
+
+services:
+  api:
+    container_name: "api"
+    build:
+      context: .
+      dockerfile: ./docker/api/Dockerfile
+    ports:
+      - 8080:8080
+    volumes:
+      - ./backend:/usr/src/app
+
+  web:
+    container_name: "web"
+    build:
+      context: .
+      dockerfile: ./docker/node/Dockerfile
+    ports:
+      - 3000:3000
+    volumes:
+      - ./frontend:/usr/src/app
+      - /usr/src/app/node_modules
+
+  nginx:
+    container_name: "nginx"
+    build: ./docker/nginx
+    ports:
+      - 80:80
+    volumes:
+      - ./frontend/build:/usr/share/nginx/html
+    depends_on:
+      - api
+      - web
